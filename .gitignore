@@ -34,3 +34,13 @@ vignettes/*.pdf
 
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
+data/incidents/uk_eight.csv
+data/incidents/uk_eleven.csv
+data/incidents/uk_five.csv
+data/incidents/uk_nine.csv
+data/incidents/uk_one.csv
+data/incidents/uk_seven.csv
+data/incidents/uk_six.csv
+data/incidents/uk_ten.csv
+data/incidents/uk_three.csv
+data/incidents/uk_two.csv
