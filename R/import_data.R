@@ -5,10 +5,13 @@ library(lubridate)
 library(sf)
 library(tmap)
 library(stringr)
+library(RANN)
+library(igraph)
 tmap_mode("view")
 
 folder = "data/incidents/"
 files = list.files(folder, full.names = TRUE, pattern = "csv")
+files = files[grepl("uk",files)]
 
 raw = list()
 for(i in seq(1,length(files))){
@@ -41,8 +44,10 @@ segments$duplicated = duplicated(segments$y) & duplicated(segments$x)
 
 segments.sf = st_as_sf(segments, coords = c("x","y"))
 st_crs(segments.sf) = 4326
+
+
 #qtm(segments.sf)
-st_write(segments.sf,"data/incidents/segments.geojson", delete_dsn = T)
+st_write(segments.sf,paste0(folder,"segments.geojson"), delete_dsn = T)
 
 incidents = raw[,c("date_time","x","y","segment","incident_start_x","incident_start_y","incident_length","incident_delay","incident_absolute_speed","incident_message")]
 segments.join = segments[,c("segment","x","y","segment_id")]
@@ -64,7 +69,8 @@ message_cats = c("blocked","slow traffic","queuing traffic","roadworks","station
 incidents.active$incident_type = str_extract(incidents.active$incident_message, paste(message_cats, collapse="|"))
 summary(as.factor(incidents.active$incident_type))
 
-write.csv(incidents.active,"data/incidents/incidents.csv", row.names = FALSE)
+write.csv(incidents.active,paste0(folder,"incidents.csv"), row.names = FALSE)
+saveRDS(incidents.active,paste0(folder,"incidents.Rds"))
 
 incidents.bysegment = lapply(unique(incidents.active$segment_id),function(x){incidents.active[incidents.active$segment_id == x,]})
 
@@ -111,7 +117,7 @@ incidents.unique = incidents.bysegment %>%
                                 delay_min = ifelse(all(is.na(incident_delay)),0,min(incident_delay, na.rm = T)),
                                 absolute_speed_max = max(incident_absolute_speed, na.rm = T),
                                 absolute_speed_min = min(incident_absolute_speed, na.rm = T),
-                                type = paste(unique(incident_type), collapse = " "),
+                                #type = paste(unique(incident_type), collapse = " "),
                                 message = paste(unique(incident_message), collapse = " "))
 
 
@@ -130,8 +136,9 @@ incidents.unique.grp = incidents.unique %>%
                                   delay_min = min(delay_min),
                                   absolute_speed_max = max(absolute_speed_max),
                                   absolute_speed_min = min(absolute_speed_min),
-                                  type = paste(unique(type), collapse = " "),
+                                  #type = paste(unique(type), collapse = " "),
                                   message = paste(unique(message), collapse = " "))
 
 incidents.unique.grp = incidents.unique.grp[order(incidents.unique.grp$start),]
-write.csv(incidents.unique.grp,"data/incidents/incidents_grouped.csv", row.names = FALSE)
+write.csv(incidents.unique.grp,paste0(folder,"incidents_grouped.csv"), row.names = FALSE)
+saveRDS(incidents.unique.grp,paste0(folder,"incidents_grouped.Rds"))
