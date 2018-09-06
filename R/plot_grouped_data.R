@@ -4,9 +4,10 @@ library(lubridate)
 library(ggplot2)
 
 
-incidents_grouped = read.csv("data/incidents/incidents_grouped.csv", stringsAsFactors = F)
-segments = st_read("data/incidents/segments.geojson")
-incidents = read.csv("data/incidents/incidents.csv", stringsAsFactors = F)
+incidents_grouped = read.csv("data/incidents/M62/clean/incidents_grouped.csv", stringsAsFactors = F)
+segments = st_read("data/incidents/M62/clean/segments.geojson")
+incidents = read.csv("data/incidents/M62/clean/incidents.csv", stringsAsFactors = F)
+folder_out = "plots/M62/"
 
 incidents_grouped$segment_id = str_split(incidents_grouped$segment_id," ")
 incidents_grouped$start = ymd_hms(incidents_grouped$start)
@@ -37,7 +38,7 @@ for(i in 1:nrow(incidents_grouped)){
     xlab("Date & Time") +
     labs( title = paste0("Event ",i,": Speed, for each segment"),
           subtitle = paste0("From ",incidents_main$start," to ",incidents_main$end)) +
-    ggsave(paste0("plots/Event_",i,"_Speed_Delay.png"))
+    ggsave(paste0(folder_out,"Event_",i,"_Speed_Delay.png"))
   
   message(paste0("Done ",i))
   

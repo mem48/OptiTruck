@@ -9,8 +9,9 @@ library(RANN)
 library(igraph)
 tmap_mode("view")
 
-folder = "data/incidents/"
-files = list.files(folder, full.names = TRUE, pattern = "csv")
+folder_in = "data/incidents/M62/raw/"
+folder_out = "data/incidents/M62/clean/"
+files = list.files(folder_in, full.names = TRUE, pattern = "csv")
 files = files[grepl("uk",files)]
 
 raw = list()
@@ -47,7 +48,7 @@ st_crs(segments.sf) = 4326
 
 
 #qtm(segments.sf)
-st_write(segments.sf,paste0(folder,"segments.geojson"), delete_dsn = T)
+st_write(segments.sf,paste0(folder_out,"segments.geojson"), delete_dsn = T)
 
 incidents = raw[,c("date_time","x","y","segment","incident_start_x","incident_start_y","incident_length","incident_delay","incident_absolute_speed","incident_message")]
 segments.join = segments[,c("segment","x","y","segment_id")]
@@ -69,8 +70,8 @@ message_cats = c("blocked","slow traffic","queuing traffic","roadworks","station
 incidents.active$incident_type = str_extract(incidents.active$incident_message, paste(message_cats, collapse="|"))
 summary(as.factor(incidents.active$incident_type))
 
-write.csv(incidents.active,paste0(folder,"incidents.csv"), row.names = FALSE)
-saveRDS(incidents.active,paste0(folder,"incidents.Rds"))
+write.csv(incidents.active,paste0(folder_out,"incidents.csv"), row.names = FALSE)
+saveRDS(incidents.active,paste0(folder_out,"incidents.Rds"))
 
 incidents.bysegment = lapply(unique(incidents.active$segment_id),function(x){incidents.active[incidents.active$segment_id == x,]})
 
@@ -140,5 +141,5 @@ incidents.unique.grp = incidents.unique %>%
                                   message = paste(unique(message), collapse = " "))
 
 incidents.unique.grp = incidents.unique.grp[order(incidents.unique.grp$start),]
-write.csv(incidents.unique.grp,paste0(folder,"incidents_grouped.csv"), row.names = FALSE)
-saveRDS(incidents.unique.grp,paste0(folder,"incidents_grouped.Rds"))
+write.csv(incidents.unique.grp,paste0(folder_out,"incidents_grouped.csv"), row.names = FALSE)
+saveRDS(incidents.unique.grp,paste0(folder_out,"incidents_grouped.Rds"))
