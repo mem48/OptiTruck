@@ -75,27 +75,7 @@ saveRDS(incidents.active,paste0(folder_out,"incidents.Rds"))
 
 incidents.bysegment = lapply(unique(incidents.active$segment_id),function(x){incidents.active[incidents.active$segment_id == x,]})
 
-# Must be in order
-cluster_times = function(x, tolerance = 10, units = "mins"){
-  lng = length(x)
-  org = x
-  #nxt = x[c(seq(2,lng),lng)]
-  pre = x[c(1,seq(1,lng-1))]
-  dif = difftime(org, pre, units =  units)
-  gap = dif > tolerance
-  grp = list()
-  grp[[1]] = 1
-  
-  for(i in seq(2,lng) ){
-    if(gap[i]){
-      grp[[i]] = grp[[i-1]] + 1
-    }else{
-      grp[[i]] = grp[[i-1]]
-    }
-  }
-  grp = unlist(grp)
-  return(grp)
-}
+source("R/cluster_times.R")
 
 for(i in 1:length(incidents.bysegment)){
   tmp = incidents.bysegment[[i]]
@@ -123,6 +103,11 @@ incidents.unique = incidents.bysegment %>%
 
 
 incidents.unique$duration_hours = round(difftime(incidents.unique$end, incidents.unique$start, units = "hours"),1)
+
+write.csv(incidents.unique,paste0(folder_out,"incidents_ungrouped.csv"), row.names = FALSE)
+saveRDS(incidents.unique,paste0(folder_out,"incidents_ungrouped.Rds"))
+
+
 
 incidents.unique.grp = incidents.unique %>%
                         group_by(start, end) %>%
