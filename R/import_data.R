@@ -56,6 +56,8 @@ segments.join = segments[,c("segment","x","y","segment_id")]
 incidents = left_join(incidents,segments.join, by = c("segment" = "segment","x" = "x","y" = "y"))
 incidents = incidents[,c("date_time","segment_id","incident_start_x","incident_start_y","incident_length","incident_delay","incident_absolute_speed","incident_message")]
 
+saveRDS(incidents,paste0(folder_out,"incidents_all.Rds"))
+
 incidents.active = incidents[!is.na(incidents$incident_start_x) |
                        !is.na(incidents$incident_start_y) |
                        !is.na(incidents$incident_length) |
@@ -104,8 +106,8 @@ incidents.unique = incidents.bysegment %>%
 
 incidents.unique$duration_hours = round(difftime(incidents.unique$end, incidents.unique$start, units = "hours"),1)
 
-write.csv(incidents.unique,paste0(folder_out,"incidents_ungrouped.csv"), row.names = FALSE)
-saveRDS(incidents.unique,paste0(folder_out,"incidents_ungrouped.Rds"))
+# write.csv(incidents.unique,paste0(folder_out,"incidents_ungrouped.csv"), row.names = FALSE)
+# saveRDS(incidents.unique,paste0(folder_out,"incidents_ungrouped.Rds"))
 
 
 

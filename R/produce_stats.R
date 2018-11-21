@@ -1,8 +1,9 @@
 # New grouping and stats
 library(dplyr)
+library(sf)
 
 # Import data
-folder = "data/incidents/M62/clean/"
+folder = "data/incidents/M18/clean/"
 incidents.active = readRDS(paste0(folder,"incidents.Rds"))
 segments = st_read(paste0(folder,"segments.geojson"))
 
@@ -48,6 +49,17 @@ incidents.unique = left_join(incidents.unique,segments_lengths, by = "segment_id
 
 incidents.unique = incidents.unique[order(incidents.unique$start),]
 
+# Greate Unique time cluster numbers
+
+times = incidents.unique[,c("start","end")]
+times = unique(times)
+times$time_cluster_unique = 1:nrow(times)
+incidents.unique = left_join(incidents.unique, times, by = c("start","end"))
+
+incidents.unique = incidents.unique[,c("segment_id","time_cluster","time_cluster_unique","start","end","n_records","start_x",
+                                       "start_y","length_max","length_min","delay_max","delay_min","absolute_speed_max",
+                                       "absolute_speed_min",  "absolute_speed_Q25","absolute_speed_Q50","absolute_speed_Q75","message",
+                                       "duration_hours","length_measured")]
 
 write.csv(incidents.unique,paste0(folder,"incidents_stats.csv"), row.names = FALSE)
 saveRDS(incidents.unique,paste0(folder,"incidents_stats.Rds"))
