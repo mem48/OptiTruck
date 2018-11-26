@@ -32,6 +32,10 @@ reports_list = reports_list[!is.na(reports_list)]
 reports_list = bind_rows(reports_list)
 
 saveRDS(reports_list,"data/incidents/M62/webtris/traffic_counts.Rds")
+
+foo = reports_list[reports_list$`Site Name` == reports_list$`Site Name`[1],]
+plot(foo$DateTime_Ending, foo$`Avg mph`, type = "l")
+
 # DFT package does not work
 # reports_alt = webtris_report(sites_sub$Id[1:100], report_type = "daily",
 #                               start_date = as.Date("2017-01-01"),
