@@ -1,4 +1,5 @@
 library(ggplot2)
+library(dplyr)
 
 # compare PTV and loop data
 loop_data = readRDS("data/incidents/M62/webtris/traffic_counts_matched.Rds")
@@ -44,9 +45,22 @@ for(i in 1:nrow(ptv_incidents)){
   sub_all = rbind(loop_sub,ptv_sub )
   ggplot(sub_all) +
     geom_line(aes(x = DateTime, y = speed, color = type)) +
-    ylim(c(0,90))
+    ylim(c(0,90)) +
     ggtitle(paste0("Incident ",i," between ",istart," and ",iend)) +
     ggsave(paste0("plots/loop_vs_ptv/M62/incident_",i,".png"))
   
   
 }
+
+# 
+# ptv_data_grouped = ptv_data %>%
+#   group_by(segment_id,incident_type) %>%
+#   
+# 
+# 
+# 
+# 
+# grepl(ptv_data$incident_message[1],types)
+# 
+# unique(ptv_data$incident_message)
+
