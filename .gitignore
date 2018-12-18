@@ -38,7 +38,13 @@ data/incidents/M18/raw/
 
 data/incidents/M62/raw/
 
+data/incidents/Italy/raw/
 
+data/incidents/M18/clean/incidents.csv
+data/incidents/M62/clean/incidents.csv
+data/incidents/Italy/clean/incidents.csv
+data/incidents/M18/webtris/traffic_counts_matched.csv
+data/incidents/M62/webtris/traffic_counts_matched.csv
 data/ptv_events_data_5minutes_motorway_1week/ptv_events_data_5minutes_motorway_1week.csv
 data/incidents/M62/clean/incidents.Rds
 data/incidents/M62/clean/incidents.csv
@@ -50,3 +56,4 @@ data/incidents/M62/webtris/traffic_counts.Rds
 *.fdt
 *.fdx
 *.fnm
+lucene/
