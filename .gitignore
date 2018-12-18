@@ -44,3 +44,9 @@ data/incidents/M62/clean/incidents.Rds
 data/incidents/M62/clean/incidents.csv
 data/incidents/M18/clean/incidents.zip
 data/incidents/M62/webtris/traffic_counts.Rds
+*.cfe
+*.cfs
+*.si
+*.fdt
+*.fdx
+*.fnm

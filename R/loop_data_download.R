@@ -7,14 +7,14 @@ library(dplyr)
 sites = webtris_sites()
 sites = st_as_sf(sites, coords = c("Longitude","Latitude"), crs = 4326)
 sites = st_transform(sites, 27700)
-segments = st_read("data/incidents/M62/clean/segments.geojson")
+segments = st_read("data/incidents/M18/clean/segments.geojson")
 segments = st_transform(segments, 27700)
 segments_buf = st_buffer(segments, 1000)
 segments_buf = st_union(segments_buf)
 sites_sub = sites[segments_buf,]
 plot(sites_sub)
 
-saveRDS(sites_sub,"data/incidents/M62/webtris/sites.Rds")
+saveRDS(sites_sub,"data/incidents/M18/webtris/sites.Rds")
 
 source("../WebTRIS/R/reports.R")
 
@@ -31,7 +31,7 @@ for(i in 1:nrow(sites_sub)){
 reports_list = reports_list[!is.na(reports_list)]
 reports_list = bind_rows(reports_list)
 
-saveRDS(reports_list,"data/incidents/M62/webtris/traffic_counts.Rds")
+saveRDS(reports_list,"data/incidents/M18/webtris/traffic_counts.Rds")
 
 foo = reports_list[reports_list$`Site Name` == reports_list$`Site Name`[1],]
 plot(foo$DateTime_Ending, foo$`Avg mph`, type = "l")

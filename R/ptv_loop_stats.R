@@ -2,8 +2,8 @@
 library(dplyr)
 library(ggplot2)
 
-incidents = readRDS("data/incidents/M62/clean/incidents.Rds")
-loop_data = readRDS("data/incidents/M62/webtris/traffic_counts_matched.Rds")
+incidents = readRDS("data/incidents/M18/clean/incidents.Rds")
+loop_data = readRDS("data/incidents/M18/webtris/traffic_counts_matched.Rds")
 incidents = incidents[incidents$segment_id %in% unique(loop_data$segment_id),]
 
 incidents$group_id = group_indices(incidents, segment_id, incident_type)
@@ -55,6 +55,7 @@ loop_summary = bind_rows(loop_summary)
 
 incidents_group_summary = left_join(incidents_group_summary, loop_summary, by = c("group_final" = "id"))
 
+incidents_group_summary$duration = as.numeric(difftime(incidents_group_summary$end, incidents_group_summary$start, units = "hours"))
 
 # Produce Summary Plots
 for(j in unique(incidents_group_summary$incident_type)){
@@ -68,13 +69,14 @@ for(j in unique(incidents_group_summary$incident_type)){
      xlab("Speed in mph") +
      ylab("Frequency") +
      ggtitle(paste0("Mean traffic speed during '",j,"'")) +
-     ggsave(paste0("plots/loop_vs_ptv/",j,".png"))
+     ggsave(paste0("plots/loop_vs_ptv/M18/",j,".png"))
     #+
     # geom_histogram(aes(x=Data, fill=Source))
 
 }
 
 
+saveRDS(incidents_group_summary,"data/incidents/M18/webtris/loop_ptv_summary.Rds")
 
 # for(j in unique(incidents_group_summary$incident_type)){
 #   tmp = incidents_group_summary[incidents_group_summary$incident_type == j,]

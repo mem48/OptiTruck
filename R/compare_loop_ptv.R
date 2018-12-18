@@ -2,9 +2,9 @@ library(ggplot2)
 library(dplyr)
 
 # compare PTV and loop data
-loop_data = readRDS("data/incidents/M62/webtris/traffic_counts_matched.Rds")
-ptv_data =  readRDS("data/incidents/M62/clean/incidents.Rds")
-ptv_incidents = readRDS("data/incidents/M62/clean/incidents_grouped.Rds")
+loop_data = readRDS("data/incidents/M18/webtris/traffic_counts_matched.Rds")
+ptv_data =  readRDS("data/incidents/M18/clean/incidents.Rds")
+ptv_incidents = readRDS("data/incidents/M18/clean/incidents_grouped.Rds")
 
 
 matching_segments = unique(loop_data$segment_id)
@@ -47,7 +47,7 @@ for(i in 1:nrow(ptv_incidents)){
     geom_line(aes(x = DateTime, y = speed, color = type)) +
     ylim(c(0,90)) +
     ggtitle(paste0("Incident ",i," between ",istart," and ",iend)) +
-    ggsave(paste0("plots/loop_vs_ptv/M62/incident_",i,".png"))
+    ggsave(paste0("plots/loop_vs_ptv/M18/incident_",i,".png"))
   
   
 }

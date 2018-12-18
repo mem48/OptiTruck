@@ -4,10 +4,10 @@ library(lubridate)
 library(ggplot2)
 
 
-incidents_grouped = read.csv("data/incidents/M62/clean/incidents_grouped.csv", stringsAsFactors = F)
-segments = st_read("data/incidents/M62/clean/segments.geojson")
-incidents = read.csv("data/incidents/M62/clean/incidents.csv", stringsAsFactors = F)
-folder_out = "plots/M62/"
+incidents_grouped = read.csv("data/incidents/Italy/clean/incidents_grouped.csv", stringsAsFactors = F)
+segments = st_read("data/incidents/Italy/clean/segments.geojson")
+incidents = read.csv("data/incidents/Italy/clean/incidents.csv", stringsAsFactors = F)
+folder_out = "plots/Italy/"
 
 incidents_grouped$segment_id = str_split(incidents_grouped$segment_id," ")
 incidents_grouped$start = ymd_hms(incidents_grouped$start)

@@ -9,8 +9,8 @@ library(RANN)
 library(igraph)
 tmap_mode("view")
 
-folder_in = "data/incidents/M62/raw/"
-folder_out = "data/incidents/M62/clean/"
+folder_in = "data/incidents/Italy/raw/"
+folder_out = "data/incidents/Italy/clean/"
 files = list.files(folder_in, full.names = TRUE, pattern = "csv")
 files = files[grepl("uk",files)]
 
@@ -68,8 +68,12 @@ incidents.active = incidents[!is.na(incidents$incident_start_x) |
 incidents.active = incidents.active[order(incidents.active$date_time),]
 
 # simplify the message
-message_cats = c("blocked","slow traffic","queuing traffic","roadworks","stationary traffic")
+message_cats = c("blocked","slow traffic","queuing traffic","roadworks","stationary traffic",
+                 "shed load","broken down vehicle","road surface in poor condition","strong winds",
+                 "accident","vehicle fire","traffic problem","people on roadway","vehicle on wrong carriageway",
+                 "animals on roadway","right lane closed","smoke hazard","slow vehicle","heavy traffic, traffic building up")
 incidents.active$incident_type = str_extract(incidents.active$incident_message, paste(message_cats, collapse="|"))
+#unique(incidents.active$incident_message[is.na(incidents.active$incident_type)])
 summary(as.factor(incidents.active$incident_type))
 
 write.csv(incidents.active,paste0(folder_out,"incidents.csv"), row.names = FALSE)
