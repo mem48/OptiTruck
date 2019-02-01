@@ -6,8 +6,8 @@ tmap_mode("view")
 library(opentripplanner)
 
 # Set Up the OTP
-path_otp = "F:/otp_optitruck/otp.jar"
-dir = "F:/otp_optitruck"
+path_otp = "D:/otp_optitruck/otp.jar"
+dir = "D:/otp_optitruck"
 memory = 50
 
 #log1 = otp_build_graph(otp = otp, dir = dir,memory = memory) # only build once
