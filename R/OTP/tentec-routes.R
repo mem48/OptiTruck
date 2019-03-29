@@ -3,49 +3,39 @@ library(sf)
 library(tmap)
 tmap_mode("view")
 
-tentec_ports <- st_read("data/TENtec_Mapping_11.03.2019/TENtec_Ports_Mk2/TENtecPorts_Mk2.shp")
-tentec_airports <- st_read("data/TENtec_Mapping_11.03.2019/TENtec_Airports/TEntec_Airports.shp")
-tentec_rail <- st_read("data/TENtec_Mapping_11.03.2019/TEN_tec_Rail/TEN_tec_Rail.shp")
+tentec_ports    <- st_read("data/TENtec Points/Ports_SHP/TENtec_Ports_Final.shp")
+tentec_airports <- st_read("data/TENtec Points/Airports_SHP/TENtec_Airports.shp")
+tentec_rail     <- st_read("data/TENtec Points/Rail_SHP/TEN_tec_Rail.shp")
+tentec_rail$Notes <- NA
+tentec_rail$Type <- "Rail"
+tentec_rail <- tentec_rail[,names(tentec_ports)]
 
-#tentec <- st_read("data/TENtec_Ports_Mk2/TENtecPorts_Mk2.shp")
 tentec <- rbind(tentec_ports, tentec_airports)
 tentec <- rbind(tentec, tentec_rail)
 rm(tentec_ports, tentec_airports, tentec_rail)
-#tentec <- tentec[16:49,]
-#tentec <- tentec[tentec$id  != 15,]
-#tentec2 <- tentec[10:15,]
 
-lines <- stplanr::points2flow(tentec)
-lines <- lines[lines$O != lines$D,]
-lines$value <- 0
-lines <- stplanr::onewayid(lines, "value")
-lines <- lines[,c("O","D","geometry")]
+# Clean
+lapply(as.data.frame(tentec)[,2:6], unique)
+tentec[,2:6] <- lapply(as.data.frame(tentec)[,2:6], as.character)
+tentec$Type[tentec$Type == "Inalnd Waterways"] <- "Inland Waterways"
+tentec$Network[tentec$Network == "Comprehensive Network"] <- "Comprehensive"
+tentec$Corridors <- as.character(tentec$Corridors)
+tentec$Corridors[tentec$Corridors == "Rhine - Alpine, Atlantic, North Sea - Mediterranean, Rhrine - Danube"] <- "Rhine - Alpine, Atlantic, North Sea - Mediterranean, Rhine - Danube" 
+tentec$Corridors[tentec$Corridors == "North Sea -Baltic"] <- "North Sea - Baltic"
+tentec$Corridors[tentec$Corridors == "North Sea - Baltic, Rhine - Alpine,  North Sea - Mediterranean"] <- "North Sea - Baltic, Rhine - Alpine, North Sea - Mediterranean" 
 
-lines.coods <- st_coordinates(lines)
-from <- lines.coods[seq(1, nrow(lines.coods), 2),c(2,1)]
-to <- lines.coods[seq(2, nrow(lines.coods), 2),c(2,1)]
+write_sf(tentec,"data/TENtec Points/TENtec_points_clean.gpkg")
+qtm(tentec, dots.col = "Type")
 
-#route = otp_plan(otpcon = otpcon, fromPlace = from[1,] , toPlace = to[1,], mode = "CAR")
-# tentec_key = tentec[tentec$Descript %in% c("Halkali","Vlore","Brindisi", "Orbassano (TO)"),]
-# lines_key <- stplanr::points2flow(tentec_key)
-# lines_key <- lines_key[lines_key$O != lines_key$D,]
-# lines_key$value <- 0
-# lines_key <- stplanr::onewayid(lines_key, "value")
-# lines_key <- lines_key[,c("O","D","geometry")]
-# 
-# lines.coods_key <- st_coordinates(lines_key)
-# from_key <- lines.coods_key[seq(1, nrow(lines.coods_key), 2),c(2,1)]
-# to_key <- lines.coods_key[seq(2, nrow(lines.coods_key), 2),c(2,1)]
-# 
-# routes_key = otp_plan_batch(otpcon = otpcon, 
-#                         fromPlace = from_key, 
-#                         toPlace = to_key, mode = "CAR", ncores = 4)
-# saveRDS(routes_key,"data/tentec-internationa-route.Rds")
+# Make into OD Dataset
+tentec <- tentec[,c("Descript")]
+toPlace   = tentec[rep(1:nrow(tentec), times = nrow(tentec)),]
+fromPlace = tentec[rep(1:nrow(tentec), each  = nrow(tentec)),]
 
-routes = otp_plan_batch(otpcon = otpcon, 
-                      fromPlace = from, 
-                      toPlace = to, mode = "CAR", ncores = 2)
-saveRDS(routes,"data/tentec-routes-190311.Rds")
+routes = otp_plan_batch(otpcon  = otpcon, 
+                      fromPlace = fromPlace, 
+                      toPlace   = toPlace, mode = "CAR", ncores = 1)
+saveRDS(routes,"data/tentec-routes-290311.Rds")
 
 source("R/OTP/line_curvature.R")
 
