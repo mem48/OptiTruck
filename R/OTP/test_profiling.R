@@ -22,5 +22,6 @@ qtm(st_zm(routes[1:10,]))
 
 foo = profile_road(routes[1:10,])
 l1 = st_length(routes[1:10,])
-l2 = rowSums(foo)
-l1/ l2
+l2 = rowSums(foo[,1:5])
+l3 = rowSums(foo[,6:10])
+l2/ l1 * 100
