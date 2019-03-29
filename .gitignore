@@ -57,3 +57,36 @@ data/incidents/M62/webtris/traffic_counts.Rds
 *.fdx
 *.fnm
 lucene/
+data/TENtec Points/Rail_SHP/TEN_tec_Rail.shx
+data/TENtec Points/Rail_SHP/TEN_tec_Rail.shp
+data/TENtec Points/Rail_SHP/TEN_tec_Rail.qpj
+data/TENtec Points/Rail_SHP/TEN_tec_Rail.prj
+data/TENtec Points/Rail_SHP/TEN_tec_Rail.dbf
+data/TENtec Points/Rail_SHP/TEN_tec_Rail.cpg
+data/TENtec Points/Rail_PNG/Rail_Rom.Bulg.png
+data/TENtec Points/Rail_PNG/Rail_Iber.png
+data/TENtec Points/Rail_PNG/Rail_Cent_EU.png
+data/TENtec Points/Ports_SHP/TENtec_Ports_Final.shx
+data/TENtec Points/Ports_SHP/TENtec_Ports_Final.shp
+data/TENtec Points/Ports_SHP/TENtec_Ports_Final.qpj
+data/TENtec Points/Ports_SHP/TENtec_Ports_Final.prj
+data/TENtec Points/Ports_SHP/TENtec_Ports_Final.dbf
+data/TENtec Points/Ports_SHP/TENtec_Ports_Final.cpg
+data/TENtec Points/Ports_PNG/Ports_turkcoast.png
+data/TENtec Points/Ports_PNG/Ports_LowLands.png
+data/TENtec Points/Ports_PNG/Ports_France.png
+data/TENtec Points/Ports_PNG/ports_cent.png
+data/TENtec Points/Ports_PNG/Ports_Bulg-Rom.png
+data/TENtec Points/Airports_SHP/TENtec_Airports.shx
+data/TENtec Points/Airports_SHP/TENtec_Airports.shp
+data/TENtec Points/Airports_SHP/TENtec_Airports.qpj
+data/TENtec Points/Airports_SHP/TENtec_Airports.qmd
+data/TENtec Points/Airports_SHP/TENtec_Airports.prj
+data/TENtec Points/Airports_SHP/TENtec_Airports.dbf
+data/TENtec Points/Airports_SHP/TENtec_Airports.cpg
+data/TENtec Points/Airports_PNG/Air3.PNG
+data/TENtec Points/Airports_PNG/Air2.PNG
+data/TENtec Points/Airports_PNG/Air1.png
+data/tentec-routes-190311.Rds
+data/tentec-routes-profiles.Rds
+data/tentec-routes.Rds
