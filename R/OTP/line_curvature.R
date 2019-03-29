@@ -119,9 +119,9 @@ profile_road <- function(x){
   message("Summarise Results")
   res_final <- list()
   for(i in seq(1,length(res_curve))){
-    res_all <- res_incline[[i]]
+    res_all <- res_incline[res_incline$line == i,]
     res_all$curve = c(res_curve[[i]],NA)
-    res_all$cum_length = cumsum(res_all$length)
+    #res_all$cum_length = cumsum(res_all$length)
     #plot(res_all$cum_length, res_all$incline, type = "l")
     #plot(res_all$cum_length, res_all$curve, type = "l", ylim = c(0,800))
     
