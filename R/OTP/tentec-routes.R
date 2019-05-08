@@ -28,18 +28,56 @@ write_sf(tentec,"data/TENtec Points/TENtec_points_clean.gpkg")
 qtm(tentec, dots.col = "Type")
 
 # Make into OD Dataset
-tentec <- tentec[,c("Descript")]
+tentec$id <- as.character(1:nrow(tentec))
+tentec <- tentec[,c("id")]
 toPlace   = tentec[rep(1:nrow(tentec), times = nrow(tentec)),]
 fromPlace = tentec[rep(1:nrow(tentec), each  = nrow(tentec)),]
 
-routes = otp_plan_batch(otpcon  = otpcon, 
-                      fromPlace = fromPlace, 
-                      toPlace   = toPlace, mode = "CAR", ncores = 1)
+rm(tentec)
+
+tofrom <- cbind(toPlace, fromPlace)
+names(tofrom) <- c("toid","fromid","togeom","fromgeom")
+tofrom <- as.data.frame(tofrom)
+tofrom <- tofrom[tofrom$toid != tofrom$fromid,]
+
+tofrom$id <- sapply(1:nrow(tofrom), function(i){
+  toid <- tofrom$toid[i]
+  fromid <- tofrom$fromid[i]
+  bothid <- c(toid, fromid)
+  bothid <- bothid[order(bothid)]
+  return(paste(bothid, collapse = " "))
+})
+
+summary(duplicated(tofrom$id))
+
+tofrom <- tofrom[!duplicated(tofrom$id), ]
+
+nrow(tofrom) / nrow(fromPlace)
+
+fromPlace2 <- tofrom[,c("fromid","fromgeom")]
+toPlace2 <- tofrom[,c("toid","togeom")]
+toPlace2 <- st_as_sf(toPlace2)
+fromPlace2 <- tofrom[,c("fromid","fromgeom")]
+fromPlace2 <- st_as_sf(fromPlace2)
+
+routes = otp_plan(otpcon  = otpcon, 
+                      fromPlace = fromPlace2, 
+                      toPlace   = toPlace2, mode = "CAR", ncores = 3)
 saveRDS(routes,"data/tentec-routes-290311.Rds")
+
+# Check altitude problem
+sizes <- sapply(st_geometry(routes), max, na.rm = TRUE)
+
+routes$sizes <- sizes
+routes <- routes[routes$sizes > 1000,]
+summary(routes$sizes[1:10])
+
+coords <- st_coordinates(routes[1,])
+plot(coords[,3])
 
 source("R/OTP/line_curvature.R")
 
-route_profiles <- profile_road(routes)
+route_profiles <- profile_road(routes[1:5,])
 saveRDS(route_profiles,"data/tentec-routes-profiles-190311.Rds")
 
 res_incline <- road_incline(routes[1,])

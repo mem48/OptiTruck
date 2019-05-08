@@ -111,7 +111,7 @@ road_incline <- function(x, measure = "cheap"){
 
 
 
-profile_road <- function(x){
+profile_road <- function(x, elevation_breaks = c(-0.03, -0.01, 0.01, 0.03) , curve_breaks = c(100, 500, 1000, 3000)){
   message("Profile Curvature")
   res_curve <- radius_curvature(x)
   message("Profile Incline")
@@ -121,6 +121,34 @@ profile_road <- function(x){
   for(i in seq(1,length(res_curve))){
     res_all <- res_incline[res_incline$line == i,]
     res_all$curve = c(res_curve[[i]],NA)
+    r_curve <- list()
+    l_cb <- length(curve_breaks)
+    for(j in seq(1, l_cb + 1)){
+      if(j == 1){
+        r_curve[[j]] <- sum(res_all$length[res_all$curve < curve_breaks[1]], na.rm = TRUE)
+      }else if(j == (l_cb + 1)){
+        r_curve[[j]] <- sum(res_all$length[res_all$curve > curve_breaks[l_cb]], na.rm = TRUE)
+      }else{
+        r_curve[[j]] <- sum(res_all$length[res_all$curve < curve_breaks[j] & res_all$curve >= curve_breaks[j-1]], na.rm = TRUE)
+      }
+    }
+    
+    r_inc <- list()
+    l_eb <- length(elevation_breaks)
+    for(j in seq(1, l_eb + 1)){
+      if(j == 1){
+        r_inc[[j]] <- sum(res_all$length[res_all$incline < elevation_breaks[1]], na.rm = TRUE)
+      }else if(j == (l_eb + 1)){
+        r_inc[[j]] <- sum(res_all$length[res_all$incline > elevation_breaks[l_eb]], na.rm = TRUE)
+      }else{
+        r_inc[[j]] <- sum(res_all$length[res_all$incline < elevation_breaks[j] & res_all$incline >= elevation_breaks[j-1]], na.rm = TRUE)
+      }
+    }
+    
+    
+    
+    Length <- c(unlist(r_inc), unlist(r_curve))
+    
     #res_all$cum_length = cumsum(res_all$length)
     #plot(res_all$cum_length, res_all$incline, type = "l")
     #plot(res_all$cum_length, res_all$curve, type = "l", ylim = c(0,800))
@@ -137,18 +165,18 @@ profile_road <- function(x){
     #                                             "Extreme Curve <= 100 m"
     #                                             
     # ),
-    Length = c(sum(res_all$length[res_all$incline >= -0.01 & res_all$incline <= 0.01]),
-               sum(res_all$length[res_all$incline > 0.01 & res_all$incline <= 0.03]),
-               sum(res_all$length[res_all$incline > 0.03]),
-               sum(res_all$length[res_all$incline < -0.01 & res_all$incline >= -0.03]),
-               sum(res_all$length[res_all$incline < -0.03]),
-               
-               sum(res_all$length[res_all$curve > 3000], na.rm = T),
-               sum(res_all$length[res_all$curve <= 3000 & res_all$curve > 1000], na.rm = T),
-               sum(res_all$length[res_all$curve <= 1000 & res_all$curve > 500], na.rm = T),
-               sum(res_all$length[res_all$curve <= 500 & res_all$curve > 100], na.rm = T),
-               sum(res_all$length[res_all$curve <= 100], na.rm = T)
-    )
+    # Length = c(sum(res_all$length[res_all$incline >= -0.01 & res_all$incline <= 0.01]),
+    #            sum(res_all$length[res_all$incline > 0.01 & res_all$incline <= 0.03]),
+    #            sum(res_all$length[res_all$incline > 0.03]),
+    #            sum(res_all$length[res_all$incline < -0.01 & res_all$incline >= -0.03]),
+    #            sum(res_all$length[res_all$incline < -0.03]),
+    #            
+    #            sum(res_all$length[res_all$curve > 3000], na.rm = T),
+    #            sum(res_all$length[res_all$curve <= 3000 & res_all$curve > 1000], na.rm = T),
+    #            sum(res_all$length[res_all$curve <= 1000 & res_all$curve > 500], na.rm = T),
+    #            sum(res_all$length[res_all$curve <= 500 & res_all$curve > 100], na.rm = T),
+    #            sum(res_all$length[res_all$curve <= 100], na.rm = T)
+    # )
     #)
     #summary_profile$Percent = summary_profile$Length / sum(res_all$length) * 100
     #foo <- t(summary_profile)
@@ -158,9 +186,33 @@ profile_road <- function(x){
   
   
   res_final <- data.frame(matrix(unlist(res_final), nrow=length(res_final), byrow=T))
-  names(res_final) <- c("Flat: -1% to +1%","Uphill 1: +1% to +3%","Uphill 2: > +3%",
-                     "Downhill 1: -1% to -3%","Downhill 2: < -3%","Straight: > 3000 m","Gentle Curve: > 1000 m",
-                     "Moderate Curve: > 500 m","Tight Curve: > 100 m","Extreme Curve <= 100 m")
+  #names(res_final) <- c()
+  nms_cur <- list()
+  for(j in seq(1, l_cb + 1)){
+    if(j == 1){
+      nms_cur[[j]] <- paste0("Curve < ",curve_breaks[j])
+    }else if(j == (l_cb + 1)){
+      nms_cur[[j]] <- paste0("Curve > ",curve_breaks[l_cb])
+    }else{
+      nms_cur[[j]] <- paste0("Curve ",curve_breaks[j-1], " - ",curve_breaks[j])
+    }
+  }
+  
+  nms_inc <- list()
+  for(j in seq(1, l_eb + 1)){
+    if(j == 1){
+      nms_inc[[j]] <- paste0("Slope < ",elevation_breaks[j])
+    }else if(j == (l_eb + 1)){
+      nms_inc[[j]] <- paste0("Slope > ",elevation_breaks[l_eb])
+    }else{
+      nms_inc[[j]] <- paste0("Slope ",elevation_breaks[j-1], " - ",elevation_breaks[j])
+    }
+  }
+  
+  names(res_final) <- c(unlist(nms_inc),unlist(nms_cur))
+  # names(res_final) <- c("Flat: -1% to +1%","Uphill 1: +1% to +3%","Uphill 2: > +3%",
+  #                    "Downhill 1: -1% to -3%","Downhill 2: < -3%","Straight: > 3000 m","Gentle Curve: > 1000 m",
+  #                    "Moderate Curve: > 500 m","Tight Curve: > 100 m","Extreme Curve <= 100 m")
   return(res_final)
 }
 
