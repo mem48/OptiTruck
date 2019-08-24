@@ -8,10 +8,10 @@ library(opentripplanner)
 
 # Set Up the OTP
 path_otp = "D:/otp_optitruck/otp.jar"
-dir = "D:/otp_optitruck"
-memory = 50
+dir = "F:/otp-optitruck"
+memory = 100
 
-#log1 = otp_build_graph(otp = otp, dir = dir,memory = memory) # only build once
+log1 = otp_build_graph(otp = path_otp, dir = dir,memory = memory, router = "current") # only build once
 # load opt, this takes a very long time ~ 1 hour
 log2 = otp_setup(otp = path_otp,
                  dir = dir,
@@ -19,7 +19,7 @@ log2 = otp_setup(otp = path_otp,
                  router = "current",
                  port = 8801,
                  securePort = 8802,
-                 analyst = TRUE,
+                 analyst = FALSE,
                  wait = TRUE)
 
 otpcon <- otp_connect(hostname =  "localhost", router = "current", port = 8801)
